@@ -29,8 +29,8 @@ app.use("/api/", chatRoute)
 const server = http.createServer(app);
 initWebSocket(server)
 
-//add this if using Railway const PORT = Number(process.env.PORT)
+const PORT = Number(process.env.PORT)
 
-server.listen(3001, () => {
+server.listen(PORT, () => {
     console.log("Listening On Port 3001 with Both HTTP & WS")
 });

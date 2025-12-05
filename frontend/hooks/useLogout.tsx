@@ -1,16 +1,18 @@
 "use client"
+
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { BACKEND_URL } from "@/lib/config";
+
 
 export const useLogout = () => {
     const router = useRouter();
 
     const logout = async () => {
         try {
-            await axios.get(`${BACKEND_URL}/logout`, {
-                withCredentials: true
-            });
+
+            await axios.post("/api/logout");
+
+            router.refresh()
 
             router.push("/");
         } catch (error) {

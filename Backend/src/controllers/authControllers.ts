@@ -68,18 +68,12 @@ export async function SignIn(req: Request, res: Response) {
             const token = jwt.sign({
                 userId: user.id
             }, secret,
-                { expiresIn: "8h" });
+                { expiresIn: "1d" });
 
-            res.cookie("access_token", token, {
-                httpOnly: true,
-                secure: false,
-                sameSite: "lax",
-                maxAge: 24 * 60 * 60 * 1000
-            });
+            return response(res, 200, "Login Success", { userId: user.id, token: token });
 
-            console.log("this is the data: ",{userId: user.id, token: token})
-            return response(res, 200, "Login Success", {userId: user.id, token: token});
-            
+        } else {
+            return response(res, 401, "Invalid Credentials");
         }
 
     } catch (error) {
@@ -92,6 +86,10 @@ export async function WsToken(req: Request, res: Response) {
 
     try {
         const userId = req.userId;
+        
+        if(!userId) {
+            return response(res, 401, "Unauthorized: User ID missing")
+        }
 
         const wsToken = jwt.sign(
             { userId },
@@ -102,21 +100,5 @@ export async function WsToken(req: Request, res: Response) {
         return response(res, 200, "Ws Token", wsToken)
     } catch (err) {
         return response(res, 500, "Failed to issue WS token");
-    }
-}
-
-export async function Logout(req:Request, res: Response) {
-    try {
-        res.clearCookie("access_token", {
-            httpOnly: true,
-            sameSite: "lax",
-            secure: false,
-            
-        })
-
-        return response(res, 200, "Successfully Logged Out");
-    } catch (error) {
-        console.log(error);
-        return response(res, 500, "Internal Server Error")
     }
 }

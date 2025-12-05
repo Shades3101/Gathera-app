@@ -40,7 +40,7 @@ const Header = ({ user }: { user: User | null }) => {
         {/* Logo Section */}
         <Link href="/" className="flex items-center gap-2 group">
           <span className="text-xl font-bold text-foreground tracking-tight">
-            Meet-Clone
+            Gathera
           </span>
         </Link>
 

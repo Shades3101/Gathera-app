@@ -13,7 +13,7 @@ const Footer = () => {
               <div className="p-2 rounded-lg bg-primary">
                 <Video className="w-6 h-6 text-background" />
               </div>
-              <span className="text-xl font-bold text-foreground">MeetClone</span>
+              <span className="text-xl font-bold text-foreground">Gathera</span>
             </div>
             <p className="text-muted-foreground text-sm">
               Professional video conferencing for modern teams.
@@ -57,7 +57,7 @@ const Footer = () => {
         {/* Bottom */}
         <div className="pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground">
-            © {currentYear} MeetClone. All rights reserved.
+            © {currentYear} Gathera. All rights reserved.
           </p>
           <div className="flex gap-6 text-sm">
             <a href="#" className="text-muted-foreground hover:text-primary transition-colors">Privacy Policy</a>

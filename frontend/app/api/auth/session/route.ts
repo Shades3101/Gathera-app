@@ -7,25 +7,29 @@ export async function POST(request: Request) {
         const { token } = body;
 
         if (!token) {
-            return NextResponse.json(
-                { error: "Token is required" },
+            return NextResponse.json({
+                 error: "Token is required" },
                 { status: 400 }
             );
         }
 
         const cookieStore = await cookies();
 
+        const isProduction = process.env.NODE_ENV === "production";
+
         // Set the cookie on the frontend domain
         cookieStore.set("access_token", token, {
             httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-            maxAge: 24 * 60 * 60 * 1000
+            path: "/",
+            secure: isProduction,
+            sameSite: isProduction ? "none": "lax",
+            maxAge: 24 * 60 * 60 
         });
 
         return NextResponse.json({
             success: true
         });
+        
     } catch (error) {
         console.error("Session creation error:", error);
         return NextResponse.json({

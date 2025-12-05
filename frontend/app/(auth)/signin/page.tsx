@@ -43,6 +43,7 @@ const SignIn = () => {
                 });
                 console.log("Session created via API route");
             }
+            router.refresh()
 
             router.push("/me")
         } catch (error: any) {

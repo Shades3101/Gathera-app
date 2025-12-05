@@ -32,7 +32,7 @@ export default function NewRoom() {
     return <div>
         <Dialog>
             <DialogTrigger asChild>
-                <Button className="w-fit sm:w-auto bg-blue-500 hover:bg-blue-600 h-full rounded-xl px-8 text-lg font-medium bg-transparent hover:bg-gray-700">
+                <Button className="w-fit sm:w-auto bg-blue-500 hover:bg-blue-600 h-full rounded-xl px-8 text-lg font-medium bg-transparent hover:bg-gray-700 cursor-pointer">
                     <Plus/>
                 </Button>
             </DialogTrigger>
@@ -53,7 +53,7 @@ export default function NewRoom() {
                 </div>
                 <DialogFooter className="sm: justify-start">
                     <DialogClose asChild>
-                        <Button type="button" variant="secondary" onClick={newRoomHandle}>
+                        <Button type="button" variant="secondary" onClick={newRoomHandle} className="cursor-pointer">
                             Create Room
                         </Button>
                     </DialogClose>

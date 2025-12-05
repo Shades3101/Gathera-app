@@ -23,7 +23,7 @@ export default async function Me() {
                     <Button variant="ghost" className="hover:bg-transparent! cursor-pointer" asChild>
                         <Link href={"/"}>
                             <div className="text-xl font-bold tracking-tight">
-                                Meet-Clone
+                                Gathera
                             </div>
                         </Link>
                     </Button>

@@ -348,30 +348,26 @@ export default function CallClient({ roomId, WsToken, }: { roomId: string; WsTok
             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-4 z-50">
 
                 {/* Mic Button */}
-                <CustomButton variant={isMicOn ? "secondary" : "destructive"} onClick={toggleMic} className="rounded-full w-14 h-14 shadow-lg" >
+                <CustomButton variant={isMicOn ? "secondary" : "destructive"} onClick={toggleMic} className="rounded-full w-14 h-14 shadow-lg cursor-pointer" >
                     {isMicOn ? <Mic /> : <MicOff />}
                 </CustomButton>
 
                 {/* Video Button */}
-                <CustomButton
-                    variant={isVideoOn ? "secondary" : "destructive"}
-                    onClick={toggleVideo}
-                    className="rounded-full w-14 h-14 shadow-lg"
-                >
+                <CustomButton variant={isVideoOn ? "secondary" : "destructive"} onClick={toggleVideo} className="rounded-full w-14 h-14 shadow-lg cursor-pointer">
                     {isVideoOn ? <Video /> : <VideoOff />}
                 </CustomButton>
 
                 {/* Soon ScreenShare */}
-                <CustomButton className="rounded-full w-14 h-14 bg-green-500 hover:bg-green-600 text-white shadow-lg">
+                <CustomButton className="rounded-full w-14 h-14 bg-green-500 hover:bg-green-600 text-white shadow-lg cursor-pointer">
                     <Monitor />
                 </CustomButton>
 
                 {/* Chat  Button */}
-                <CustomButton onClick={() => setShowChat((prev) => !prev)} className="rounded-full w-14 h-14 text-white shadow-lg" variant={showChat ? "secondary" : "destructive"}>
+                <CustomButton onClick={() => setShowChat((prev) => !prev)} className="rounded-full w-14 h-14 text-white shadow-lg cursor-pointer" variant={showChat ? "secondary" : "destructive"}>
                     <MessageSquareText />
                 </CustomButton>
 
-                <CustomButton variant="destructive" className="rounded-full w-14 h-14 shadow-lg" onClick={leaveCall} >
+                <CustomButton variant="destructive" className="rounded-full w-14 h-14 shadow-lg cursor-pointer" onClick={leaveCall} >
                     <Phone className="rotate-135" />
                 </CustomButton>
             </div>

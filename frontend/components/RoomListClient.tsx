@@ -97,8 +97,8 @@ export default function RoomListClient({ rooms }: RoomListClientProps) {
                                                 Copy Invitation
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator />
-                                            <DropdownMenuItem className="text-red-600 focus:text-red-600 focus:bg-red-50" onClick={(e) => handleDelete(e, room.id)} >
-                                                <Trash2 className="mr-2 h-4 w-4" />
+                                            <DropdownMenuItem className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer" onClick={(e) => handleDelete(e, room.id)} >
+                                                <Trash2 className="mr-2 h-4 w-4"/>
                                                 Delete Room
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>

@@ -3,6 +3,7 @@ import axios from "axios";
 import { BACKEND_URL } from "@/lib/config";
 import { getWsToken } from "@/lib/getWsToken";
 import CallClient from "./CallClient";
+import { userSession } from "@/lib/authGuard";
 
 async function getRoomId(slug: string) {
     const token = (await cookies()).get("access_token")?.value || "";
@@ -21,6 +22,11 @@ export default async function CallPage({ params }: {
         slug: string
     }>
 }) {
+    const user = await userSession();
+
+    if(!user) {
+        return null
+    }
 
     const slug = (await params).slug;
     const roomId = await getRoomId(slug);

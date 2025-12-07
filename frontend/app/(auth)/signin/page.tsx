@@ -9,7 +9,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { BACKEND_URL } from "@/lib/config";
+import { api } from "@/lib/api";
 import { Loader2 } from "lucide-react";
 
 const SignIn = () => {
@@ -27,11 +27,10 @@ const SignIn = () => {
             return console.log("All fields are required");
         }
         try {
-            const response = await axios.post(`${BACKEND_URL}/signin`, {
+            const response = await api.post(`/signin`, {
                 email,
                 password,
-            },
-                { withCredentials: true });
+            });
 
             console.log("Signin Successful", response.data);
 

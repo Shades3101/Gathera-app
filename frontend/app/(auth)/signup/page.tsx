@@ -6,8 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import Image from "next/image";
-import axios from "axios";
-import { BACKEND_URL } from "@/lib/config";
+import { api } from "@/lib/api";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -36,7 +35,7 @@ const SignUp = () => {
         }
 
         try {
-            const response = await axios.post(`${BACKEND_URL}/signup`, {
+            const response = await api.post(`/signup`, {
                 name,
                 email,
                 password,
@@ -106,7 +105,7 @@ const SignUp = () => {
                             "Sign Up"
                         )}
 
-                    
+
                     </Button>
                 </CardContent>
                 <CardFooter className="flex flex-col space-y-4">

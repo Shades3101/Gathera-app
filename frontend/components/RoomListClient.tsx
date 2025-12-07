@@ -5,8 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
-import axios from "axios";
-import { BACKEND_URL } from "@/lib/config";
+import { api } from "@/lib/api";
 
 export interface Room {
     id: string;
@@ -41,12 +40,11 @@ export default function RoomListClient({ rooms, token }: RoomListClientProps) {
         console.log("Deleting room:", id);
 
         try {
-            await axios.delete(`${BACKEND_URL}/delete-Room`, {
+            await api.delete(`/delete-Room`, {
                 data: { id },
                 headers: {
                     ...(token ? { Authorization: `Bearer ${token}` } : {})
                 },
-                withCredentials: true
             });
 
             console.log("Room deleted successfully");

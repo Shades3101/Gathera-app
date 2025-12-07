@@ -16,16 +16,17 @@ export interface Room {
 
 interface RoomListClientProps {
     rooms: Room[];
+    token?: string;
 }
 
-export default function RoomListClient({ rooms }: RoomListClientProps) {
+export default function RoomListClient({ rooms, token }: RoomListClientProps) {
     const router = useRouter();
-    
+
     const handleRoomClick = (slug: string) => {
         router.push(`/call/${slug}`);
     };
 
- 
+
     const handleCopyLink = (e: React.MouseEvent, slug: string) => {
         e.stopPropagation();
         const url = `${window.location.origin}/room/${slug}`;
@@ -36,15 +37,24 @@ export default function RoomListClient({ rooms }: RoomListClientProps) {
 
     const handleDelete = async (e: React.MouseEvent, id: string) => {
         e.stopPropagation();
-        
-        console.log(id)
-        const res = await axios.delete(`${BACKEND_URL}/delete-Room`, {
-            data: { id },
-            withCredentials: true
-        });
 
-        router.refresh()
-        console.log("Delete room", id);
+        console.log("Deleting room:", id);
+
+        try {
+            await axios.delete(`${BACKEND_URL}/delete-Room`, {
+                data: { id },
+                headers: {
+                    ...(token ? { Authorization: `Bearer ${token}` } : {})
+                },
+                withCredentials: true
+            });
+
+            console.log("Room deleted successfully");
+            router.refresh();
+        } catch (error: any) {
+            console.error("Failed to delete room:", error.response?.data || error.message);
+            alert("Failed to delete room: " + (error.response?.data?.message || "Unknown error"));
+        }
     };
 
     return (
@@ -57,9 +67,9 @@ export default function RoomListClient({ rooms }: RoomListClientProps) {
                 <div className="flex flex-col">
                     {rooms.map((room, index) => (
                         <div key={room.id} className="group">
-                           
+
                             <div onClick={() => handleRoomClick(room.slug)} className="flex items-center justify-between px-4 py-4 hover:bg-muted/40 transition-colors cursor-pointer rounded-lg">
-                           
+
                                 <div className="flex items-center gap-4 min-w-0">
                                     <div className="p-2 bg-muted/30 rounded-full text-muted-foreground group-hover:text-blue-500 transition-colors">
                                         <Group className="h-5 w-5" />
@@ -98,7 +108,7 @@ export default function RoomListClient({ rooms }: RoomListClientProps) {
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer" onClick={(e) => handleDelete(e, room.id)} >
-                                                <Trash2 className="mr-2 h-4 w-4"/>
+                                                <Trash2 className="mr-2 h-4 w-4" />
                                                 Delete Room
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>

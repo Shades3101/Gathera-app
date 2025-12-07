@@ -18,5 +18,8 @@ async function getRooms(): Promise<Room[]> {
 export default async function RoomList() {
     const rooms = await getRooms();
 
-    return <RoomListClient rooms={rooms} />;
+    const cookieStore = await cookies();
+    const token = cookieStore.get("access_token")?.value;
+
+    return <RoomListClient rooms={rooms} token={token} />;
 }

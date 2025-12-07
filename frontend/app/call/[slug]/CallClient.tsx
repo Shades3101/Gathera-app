@@ -110,7 +110,7 @@ function VideoConference({ chatMessages, sendChatMessage, showChat, setShowChat,
     );
 }
 
-export default function CallClient({ roomId, WsToken }: { roomId: string; WsToken: string; }) {
+export default function CallClient({ roomId, WsToken, accessToken }: { roomId: string; WsToken: string; accessToken: string; }) {
     if (!WsToken) return null;
 
     const router = useRouter();
@@ -173,6 +173,9 @@ export default function CallClient({ roomId, WsToken }: { roomId: string; WsToke
                 console.log("CallClient: Requesting", url);
 
                 const res = await axios.get(url, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    },
                     withCredentials: true
                 });
 
@@ -194,7 +197,7 @@ export default function CallClient({ roomId, WsToken }: { roomId: string; WsToke
             }
         };
         fetchToken();
-    }, [roomId, userId]);
+    }, [roomId, userId, accessToken]);
 
     const sendChatMessage = (text: string) => {
         if (!text.trim()) {

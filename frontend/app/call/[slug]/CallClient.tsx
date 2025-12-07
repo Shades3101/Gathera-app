@@ -70,7 +70,7 @@ export default function CallClient({ roomId, WsToken, }: { roomId: string; WsTok
         if (localVideoRef.current && localStream) {
             localVideoRef.current.srcObject = localStream;
         }
-    }, [localStream]);
+    }, [localStream, remoteStream]);
 
     const setupWebRTC = () => {
         const pc = new RTCPeerConnection({
@@ -292,20 +292,20 @@ export default function CallClient({ roomId, WsToken, }: { roomId: string; WsTok
 
         setChatMessages((prev) => [...prev, localMsg]);
 
-        socket?.send( JSON.stringify({
-                type: "chat",
-                roomId,
-                message: text, 
-            })
+        socket?.send(JSON.stringify({
+            type: "chat",
+            roomId,
+            message: text,
+        })
         );
     };
 
     function leaveCall() {
         if (socket && isConnected) {
-            socket.send( JSON.stringify({
-                    type: "leave-room",
-                    roomId,
-                })
+            socket.send(JSON.stringify({
+                type: "leave-room",
+                roomId,
+            })
             );
         }
 
@@ -329,7 +329,7 @@ export default function CallClient({ roomId, WsToken, }: { roomId: string; WsTok
             <div className="relative w-full max-w-7xl aspect-video mx-auto bg-black rounded-3xl overflow-hidden shadow-2xl border border-white/5 ring-1 ring-white/5">
                 {remoteStream ? (
                     <>
-                        <video ref={remoteVideoRef} playsInline className="w-full h-full object-cover" />
+                        <video ref={remoteVideoRef} playsInline autoPlay className="w-full h-full object-cover" />
 
                         {/* Local video */}
                         <div className="absolute bottom-4 right-4 w-64 aspect-video bg-black/50 rounded-xl border border-white/20 shadow-2xl overflow-hidden z-10">

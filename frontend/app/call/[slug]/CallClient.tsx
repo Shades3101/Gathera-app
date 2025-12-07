@@ -30,7 +30,7 @@ function VideoConference({ chatMessages, sendChatMessage, showChat, setShowChat,
     );
 
     const localTrack = tracks.find(t => t.participant.identity === room.localParticipant.identity && t.source === Track.Source.Camera);
-    const remoteTrack = tracks.find(t => t.participant.identity !== room.localParticipant.identity && t.source === Track.Source.Camera);
+    const remoteTracks = tracks.filter(t => t.participant.identity !== room.localParticipant.identity && t.source === Track.Source.Camera);
 
     const [isMicOn, setIsMicOn] = useState(false);
     const [isVideoOn, setIsVideoOn] = useState(false);
@@ -52,9 +52,24 @@ function VideoConference({ chatMessages, sendChatMessage, showChat, setShowChat,
             {/* VIDEO AREA */}
             <div className="relative w-full max-w-7xl aspect-video mx-auto bg-black rounded-3xl overflow-hidden shadow-2xl border border-white/5 ring-1 ring-white/5">
 
-                {/* REMOTE VIDEO*/}
-                {remoteTrack ? (
-                    <VideoTrack trackRef={remoteTrack as TrackReference} className="w-full h-full object-cover" />
+                {/* REMOTE VIDEO GRID */}
+                {remoteTracks.length > 0 ? (
+                    <div className={`grid w-full h-full ${remoteTracks.length === 1 ? "grid-cols-1" :
+                        remoteTracks.length <= 4 ? "grid-cols-2" :
+                            "grid-cols-3"
+                        }`}>
+                        {remoteTracks.map((track) => (
+                            <div key={track.participant.identity} className="relative w-full h-full overflow-hidden border border-black/20">
+                                <VideoTrack
+                                    trackRef={track as TrackReference}
+                                    className="w-full h-full object-cover"
+                                />
+                                <div className="absolute bottom-2 left-2 bg-black/60 px-2 py-0.5 rounded text-xs text-white">
+                                    {track.participant.identity}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 ) : (
                     <div className="w-full h-full flex items-center justify-center text-white/50">
                         Waiting for others...
@@ -62,7 +77,7 @@ function VideoConference({ chatMessages, sendChatMessage, showChat, setShowChat,
                 )}
 
                 {/* LOCAL VIDEO  */}
-                <div className="absolute bottom-4 right-4 w-64 aspect-video bg-black/50 rounded-xl border border-white/20 shadow-2xl overflow-hidden z-10">
+                <div className="absolute bottom-4 right-4 w-64 aspect-video bg-black/50 rounded-xl border border-white/20 shadow-2xl overflow-hidden z-10 transition-all hover:scale-105">
                     {localTrack && (
                         <VideoTrack trackRef={localTrack as TrackReference} className="w-full h-full object-cover scale-x-[-1]" />
                     )}

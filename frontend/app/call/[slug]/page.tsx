@@ -24,14 +24,15 @@ export default async function CallPage({ params }: {
 }) {
     const user = await userSession();
 
-    if(!user) {
+    if (!user) {
         return null
     }
 
     const slug = (await params).slug;
     const roomId = await getRoomId(slug);
     const wsToken = await getWsToken();
+    const accessToken = (await cookies()).get("access_token")?.value || "";
 
 
-    return <CallClient roomId={roomId} WsToken={wsToken} />
+    return <CallClient roomId={roomId} WsToken={wsToken} accessToken={accessToken} />
 }

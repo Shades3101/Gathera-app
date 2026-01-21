@@ -12,7 +12,7 @@ import { CustomButton } from "@/components/ui/custombutton";
 import { useRouter } from "next/navigation";
 import { InCallChatPanel } from "@/components/InCallChatPanel";
 
-// This component handles the ROOM connection and tracks
+// the room connection and tracks
 function VideoConference({ chatMessages, sendChatMessage, showChat, setShowChat, leaveCall }: {
     chatMessages: any[],
     sendChatMessage: (text: string) => void,
@@ -126,7 +126,10 @@ function VideoConference({ chatMessages, sendChatMessage, showChat, setShowChat,
 }
 
 export default function CallClient({ roomId, WsToken, accessToken }: { roomId: string; WsToken: string; accessToken: string; }) {
-    if (!WsToken) return null;
+
+    if (!WsToken) {
+        return null;
+    }
 
     const router = useRouter();
     const { socket, isConnected, userId } = UseSocket(WsToken);
@@ -153,13 +156,16 @@ export default function CallClient({ roomId, WsToken, accessToken }: { roomId: s
             const data = JSON.parse(event.data);
             if (data.type === "chat") {
                 if (data.sender === userId) {
-                    return; // Ignore own messages
+                    return; // Ignoring own messages
                 }
                 const incoming = {
                     id: Date.now(),
                     text: data.message,
                     sender: "other" as const,
-                    time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+                    time: new Date().toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit"
+                    }),
                 };
                 setChatMessages((prev) => [...prev, incoming]);
             }
@@ -200,15 +206,15 @@ export default function CallClient({ roomId, WsToken, accessToken }: { roomId: s
                     setLiveKitToken(res.data.data.token);
                 }
 
-                // CRITICAL: Set the URL so the loading screen passes
+                // CRITICAL: Set the URL so the loading screen passes : DONE
                 if (res.data.data.serverUrl) {
                     setLiveKitUrl(res.data.data.serverUrl);
                 } else {
                     console.error("CallClient: No LiveKit URL found in response or env!");
                 }
 
-            } catch (e) {
-                console.error("Failed to get LiveKit token", e);
+            } catch (error) {
+                console.error("Failed to get LiveKit token", error);
             }
         };
         fetchToken();
@@ -245,22 +251,20 @@ export default function CallClient({ roomId, WsToken, accessToken }: { roomId: s
     }
 
     return (
-        <LiveKitRoom
-            video={false}
-            audio={false}
-            token={liveKitToken}
+        <LiveKitRoom video={false} audio={false} token={liveKitToken}
             options={{ publishDefaults: { videoSimulcastLayers: [VideoPresets.h720, VideoPresets.h360] } }}
             serverUrl={liveKitUrl}
             data-lk-theme="default"
             style={{ height: '100vh' }}
-            onDisconnected={() => { router.push("/me"); }}
-            onError={(err) => { console.error("LiveKit Error:", err); }}
+            onDisconnected={() => {
+                router.push("/me");
+            }}
+
+            onError={(err) => {
+                console.error("LiveKit Error:", err);
+            }}
         >
-            <VideoConference
-                chatMessages={chatMessages}
-                sendChatMessage={sendChatMessage}
-                showChat={showChat}
-                setShowChat={setShowChat}
+            <VideoConference chatMessages={chatMessages} sendChatMessage={sendChatMessage} showChat={showChat} setShowChat={setShowChat}
                 leaveCall={leaveCall}
             />
         </LiveKitRoom>

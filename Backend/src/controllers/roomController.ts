@@ -85,6 +85,10 @@ export async function getRoomId(req: Request, res: Response) {
         }
     })
 
+    if (!room) {
+        return response(res, 404, "Room not found")
+    }
+
     return response(res, 200, "Room Fetched Successfully", room)
 }
 

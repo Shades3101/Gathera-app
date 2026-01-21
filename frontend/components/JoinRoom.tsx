@@ -31,8 +31,6 @@ export default function JoinRoom() {
             if (axios.isAxiosError(error)) {
                 if (error.response?.status === 404) {
                     setError("Room not found");
-                } else if (error.response?.status === 401) {
-                    setError("Please login to join the room");
                 } else {
                     setError("Something went wrong");
                 }

@@ -13,8 +13,7 @@ const createToken = async (roomName: string, participantName: string) => {
         process.env.LIVEKIT_API_SECRET,
         {
             identity: participantName,
-            // Token valid for 1 hour? Let's make it configurable or standard.
-            ttl: '1h',
+            ttl: '24h',
         },
     );
     at.addGrant({ roomJoin: true, room: roomName });

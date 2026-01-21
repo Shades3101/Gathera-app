@@ -1,7 +1,7 @@
 "use client";
 
 import { LiveKitRoom, VideoTrack, useTracks, useRoomContext, TrackReference } from "@livekit/components-react";
-import { Room, RoomEvent, VideoPresets, Track } from "livekit-client";
+import { Room, RoomEvent, VideoPresets, Track, LocalTrackPublication, LocalParticipant } from "livekit-client";
 import { BACKEND_URL } from "@/lib/config";
 import axios from "axios";
 import "@livekit/components-styles";
@@ -30,10 +30,28 @@ function VideoConference({ chatMessages, sendChatMessage, showChat, setShowChat,
     );
 
     const localTrack = tracks.find(t => t.participant.identity === room.localParticipant.identity && t.source === Track.Source.Camera);
-    const remoteTracks = tracks.filter(t => t.participant.identity !== room.localParticipant.identity && t.source === Track.Source.Camera);
+    const remoteTracks = tracks.filter(t => t.participant.identity !== room.localParticipant.identity && (t.source === Track.Source.Camera || t.source === Track.Source.ScreenShare));
 
     const [isMicOn, setIsMicOn] = useState(false);
     const [isVideoOn, setIsVideoOn] = useState(false);
+    const [isScreenShareOn, setIsScreenShareOn] = useState(false);
+
+    useEffect(() => {
+        const handleLocalTrackUnpublished = (
+            publication: LocalTrackPublication,
+            participant: LocalParticipant
+        ) => {
+            if (publication.source === Track.Source.ScreenShare) {
+                setIsScreenShareOn(false);
+            }
+        };
+
+        room.on(RoomEvent.LocalTrackUnpublished, handleLocalTrackUnpublished);
+
+        return () => {
+            room.off(RoomEvent.LocalTrackUnpublished, handleLocalTrackUnpublished);
+        };
+    }, [room]);
 
     const toggleMic = async () => {
         const newState = !isMicOn;
@@ -45,6 +63,17 @@ function VideoConference({ chatMessages, sendChatMessage, showChat, setShowChat,
         const newState = !isVideoOn;
         setIsVideoOn(newState);
         await room.localParticipant.setCameraEnabled(newState);
+    }
+
+    const toggleScreenShare = async () => {
+        const newState = !isScreenShareOn;
+        try {
+            await room.localParticipant.setScreenShareEnabled(newState);
+            setIsScreenShareOn(newState);
+        } catch (error) {
+            console.error("Failed to toggle screen share:", error);
+            setIsScreenShareOn(false);
+        }
     }
 
     return (
@@ -59,7 +88,7 @@ function VideoConference({ chatMessages, sendChatMessage, showChat, setShowChat,
                             "grid-cols-3"
                         }`}>
                         {remoteTracks.map((track) => (
-                            <div key={track.participant.identity} className="relative w-full h-full overflow-hidden border border-black/20">
+                            <div key={`${track.participant.identity}-${track.source}`} className="relative w-full h-full overflow-hidden border border-black/20">
                                 <VideoTrack
                                     trackRef={track as TrackReference}
                                     className="w-full h-full object-cover"
@@ -100,8 +129,8 @@ function VideoConference({ chatMessages, sendChatMessage, showChat, setShowChat,
                     {isVideoOn ? <Video /> : <VideoOff />}
                 </CustomButton>
 
-                {/* Soon ScreenShare */}
-                <CustomButton className="rounded-full w-14 h-14 bg-green-500 hover:bg-green-600 text-white shadow-lg cursor-pointer" disabled>
+                {/* ScreenShare */}
+                <CustomButton variant={isScreenShareOn ? "secondary" : "destructive"} onClick={toggleScreenShare} className="rounded-full w-14 h-14 shadow-lg cursor-pointer">
                     <Monitor />
                 </CustomButton>
 

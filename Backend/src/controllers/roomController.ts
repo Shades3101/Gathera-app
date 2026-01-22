@@ -94,8 +94,27 @@ export async function getRoomId(req: Request, res: Response) {
 
 export async function deleteRoom(req: Request, res: Response) {
     const roomId = req.body.id;
+    const userId = req.userId;
+
+    if (!userId) {
+        return response(res, 401, "Unauthorized");
+    }
 
     try {
+        const room = await prismaClient.room.findUnique({
+            where: {
+                id: roomId
+            }
+        });
+
+        if (!room) {
+            return response(res, 404, "Room not found");
+        }
+
+        if (room.hostId !== userId) {
+            return response(res, 403, "You are not authorized to delete this room");
+        }
+
         await prismaClient.room.delete({
             where: {
                 id: roomId

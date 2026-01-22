@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
+import { notify } from "@/lib/notify";
 
 export interface Room {
     id: string;
@@ -30,8 +31,8 @@ export default function RoomListClient({ rooms, token }: RoomListClientProps) {
         e.stopPropagation();
         const url = `${window.location.origin}/room/${slug}`;
         navigator.clipboard.writeText(url);
-        // You can add a toast notification here if you have one set up
-        alert("Link copied to clipboard!");
+        // add a toast notification here :  Done
+        notify.success("Link Copied")
     };
 
     const handleDelete = async (e: React.MouseEvent, id: string) => {
@@ -47,11 +48,11 @@ export default function RoomListClient({ rooms, token }: RoomListClientProps) {
                 },
             });
 
-            console.log("Room deleted successfully");
+            notify.success("Room deleted successfully");
             router.refresh();
         } catch (error: any) {
             console.error("Failed to delete room:", error.response?.data || error.message);
-            alert("Failed to delete room: " + (error.response?.data?.message || "Unknown error"));
+            notify.error("Failed to delete room: " + (error.response?.data?.message || "Unknown error"));
         }
     };
 

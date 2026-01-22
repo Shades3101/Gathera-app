@@ -39,12 +39,12 @@ export default function UserMenu({ user }: { user: User | null }) {
                     </Avatar>
                 </div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end">
+            <DropdownMenuContent className="w-72" align="end">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuLabel>
                     <div className="flex justify-between items-center font-semibold">
                         <span>{user.email}</span>
-                        <Button variant="ghost" size="sm" className="hover:bg-gray-700 cursor-pointer" onClick={logout}>Logout</Button>
+                        <Button variant="ghost" size="sm" className="hover:bg-red-900/70 cursor-pointer" onClick={logout}>Logout</Button>
                     </div>
                 </DropdownMenuLabel>
             </DropdownMenuContent>

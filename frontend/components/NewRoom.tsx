@@ -8,6 +8,7 @@ import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
+import { notify } from "@/lib/notify";
 
 interface NewRoomProps {
     token?: string;
@@ -30,9 +31,11 @@ export default function NewRoom({ token }: NewRoomProps) {
             )
 
             console.log("Room Created", resposne.data)
+            notify.success("Successfully Created New Room ")
             router.refresh()
         } catch (error) {
             console.log(error);
+            notify.error("Failed to create a new room. Please Try Again in Sometime")
         }
     }
 

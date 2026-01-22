@@ -1,7 +1,6 @@
 import NewRoom from "@/components/NewRoom";
 import { cookies } from "next/headers";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { userSession } from "@/lib/authGuard";
 import Link from "next/link";
 import UserMenu from "@/components/UserMenu";
@@ -9,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import RoomList from "@/app/me/RoomList";
 import { ChevronDown } from "lucide-react";
 import JoinRoom from "@/components/JoinRoom";
+import ScrollToRooms from "@/components/ScrollToRooms";
 
 // Force dynamic rendering for this page since it uses cookies
 export const dynamic = 'force-dynamic';
@@ -53,13 +53,11 @@ export default async function Me() {
                         <JoinRoom />
                     </div>
 
-                    <div className="absolute bottom-10 animate-bounce text-muted-foreground">
-                        <ChevronDown className="w-6 h-6" />
-                    </div>
+                    <ScrollToRooms />
                 </section>
 
                 <Separator />
-                <section className="container mx-auto px-4 py-16 min-h-screen space-y-8 ">
+                <section id="my-rooms" className="container mx-auto px-4 py-16 min-h-screen space-y-8 ">
                     <div className="flex items-center justify-between">
                         <h2 className="text-3xl font-bold tracking-tight">My Rooms</h2>
                         <NewRoom token={token} />

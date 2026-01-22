@@ -11,20 +11,26 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { api } from "@/lib/api";
 import { Loader2 } from "lucide-react";
+import { notify } from "@/lib/notify";
 
 const SignIn = () => {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const isFormValid = email.trim() !== "" && password.trim() !== ""
     const router = useRouter();
 
     const handleSignin = async () => {
 
+        if(!isFormValid) {
+            return 
+        }
+
         setIsLoading(true)
 
         if (!email || !password) {
-            return console.log("All fields are required");
+             return console.log("All fields are required");
         }
         try {
             const response = await api.post(`/signin`, {
@@ -33,8 +39,8 @@ const SignIn = () => {
             });
 
             console.log("Signin Successful", response.data);
-
-
+            notify.success("Signin Successful")
+            
             //setting the cookie in frontend for it to accessible 
             if (response.data.data && response.data.data.token) {
                 await axios.post("/api/auth/session", {
@@ -44,9 +50,12 @@ const SignIn = () => {
             }
             router.refresh()
 
-            router.push("/me")
+            router.push("/me");
+
         } catch (error: any) {
             console.error("Signin Failed:", error.response?.data || error.message);
+            notify.error("Signin Failed");
+
         } finally {
             setIsLoading(false);
         }
@@ -90,7 +99,7 @@ const SignIn = () => {
                             onChange={(e) => setPassword(e.target.value)}
                         />
                     </div>
-                    <Button variant="ghost" className="w-full bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer" size="lg" onClick={handleSignin} disabled={isLoading}>
+                    <Button variant="ghost" className="w-full bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer" size="lg" onClick={handleSignin} disabled={ !isFormValid || isLoading }>
                         {isLoading ? (
                             <div className="flex items-center justify-center gap-2">
                                 <Loader2 className="h-4 w-4 animate-spin" />

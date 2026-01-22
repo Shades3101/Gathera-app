@@ -10,7 +10,7 @@ import { api } from "@/lib/api";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-
+import { notify } from "@/lib/notify";
 
 
 const SignUp = () => {
@@ -27,7 +27,7 @@ const SignUp = () => {
         setIsLoading(true)
 
         if (!name || !email || !password || !confirmPassword) {
-            return console.log("All fields are required");
+           return console.log("All fields are required");
         }
 
         if (password !== confirmPassword) {
@@ -42,10 +42,12 @@ const SignUp = () => {
             });
 
             console.log("SignUp Successful", response.data);
+            notify.success("SignUp Successful")
 
             router.push("/signin")
         } catch (error: any) {
             console.error("SignUp Failed:", error.response?.data || error.message);
+            notify.error("SignUp Failed")
         } finally {
             setIsLoading(false);
         }

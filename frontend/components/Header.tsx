@@ -35,7 +35,7 @@ const Header = ({ user }: { user: User | null }) => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md">
-      <div className="container mx-auto px-4 flex h-16 items-center justify-between">
+      <div className="container mx-auto px-4 flex h-16 items-center justify-between relative">
 
         {/* Logo Section */}
         <Link href="/" className="flex items-center gap-2 group">
@@ -45,7 +45,7 @@ const Header = ({ user }: { user: User | null }) => {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-8 ml-30">
+        <nav className="hidden md:flex items-center gap-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
           {navItems.map((item) => (
             <Link key={item.href} href={item.href} className={cn("text-sm font-medium transition-colors hover:text-primary",
               pathname === item.href ? "text-foreground font-semibold" : "text-muted-foreground"
@@ -82,12 +82,12 @@ const Header = ({ user }: { user: User | null }) => {
 
           ) : (
             <>
-            <Button variant="link" >
-               <Link href="/signin" className="text-sm hover:text-blue-500 font-medium text-muted-foreground transition-colors">
-                Sign In
-              </Link>
-            </Button>
-             
+              <Button variant="link" >
+                <Link href="/signin" className="text-sm hover:text-blue-500 font-medium text-muted-foreground transition-colors">
+                  Sign In
+                </Link>
+              </Button>
+
               <Button asChild size="sm" className="font-semibold cursor-pointer">
                 <Link href="/signup">Get Started</Link>
               </Button>

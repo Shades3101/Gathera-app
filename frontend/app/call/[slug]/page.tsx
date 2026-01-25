@@ -1,12 +1,12 @@
-import { cookies } from "next/headers";
 import axios from "axios";
 import { BACKEND_URL } from "@/lib/config";
 import { getWsToken } from "@/lib/getWsToken";
 import CallClient from "./CallClient";
 import { userSession } from "@/lib/authGuard";
+import { getAccessToken } from "@/lib/getAccessToken";
 
 async function getRoomId(slug: string) {
-    const token = (await cookies()).get("access_token")?.value || "";
+    const token = await getAccessToken();
 
     const res = await axios.get(`${BACKEND_URL}/room/${slug}`, {
         headers: {
@@ -31,7 +31,7 @@ export default async function CallPage({ params }: {
     const slug = (await params).slug;
     const roomId = await getRoomId(slug);
     const wsToken = await getWsToken();
-    const accessToken = (await cookies()).get("access_token")?.value || "";
+    const accessToken = await getAccessToken();
 
 
     return <CallClient roomId={roomId} WsToken={wsToken} accessToken={accessToken} />

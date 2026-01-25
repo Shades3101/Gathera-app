@@ -3,6 +3,7 @@
 import { notify } from "@/lib/notify";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 
 
 export const useLogout = () => {
@@ -10,7 +11,7 @@ export const useLogout = () => {
 
     const logout = async () => {
         try {
-
+            await signOut({ redirect: false });
             await axios.post("/api/logout");
 
             router.refresh()

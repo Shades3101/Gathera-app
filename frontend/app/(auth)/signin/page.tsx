@@ -12,6 +12,7 @@ import axios from "axios";
 import { api } from "@/lib/api";
 import { Loader2 } from "lucide-react";
 import { notify } from "@/lib/notify";
+import { signIn } from "next-auth/react";
 
 const SignIn = () => {
 
@@ -23,14 +24,14 @@ const SignIn = () => {
 
     const handleSignin = async () => {
 
-        if(!isFormValid) {
-            return 
+        if (!isFormValid) {
+            return
         }
 
         setIsLoading(true)
 
         if (!email || !password) {
-             return console.log("All fields are required");
+            return console.log("All fields are required");
         }
         try {
             const response = await api.post(`/signin`, {
@@ -40,10 +41,10 @@ const SignIn = () => {
 
             console.log("Signin Successful", response.data);
             notify.success("Signin Successful")
-            
+
             //setting the cookie in frontend for it to accessible 
             if (response.data.data && response.data.data.token) {
-                await axios.post("/api/auth/session", {
+                await axios.post("/api/auth/login-session", {
                     token: response.data.data.token
                 });
                 console.log("Session created via API route");
@@ -99,7 +100,7 @@ const SignIn = () => {
                             onChange={(e) => setPassword(e.target.value)}
                         />
                     </div>
-                    <Button variant="ghost" className="w-full bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer" size="lg" onClick={handleSignin} disabled={ !isFormValid || isLoading }>
+                    <Button variant="ghost" className="w-full bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer" size="lg" onClick={handleSignin} disabled={!isFormValid || isLoading}>
                         {isLoading ? (
                             <div className="flex items-center justify-center gap-2">
                                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -115,11 +116,11 @@ const SignIn = () => {
                         <div className="absolute inset-0 flex items-center">
                             <span className="w-full border-t border-border" />
                         </div>
-                        <div className="relative flex justify-center text-xs uppercase hidden">
+                        <div className="relative flex justify-center text-xs uppercase">
                             <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
                         </div>
                     </div>
-                    <Button variant="outline" className="w-full border-border text-foreground hover:bg-secondary cursor-pointer" hidden>
+                    <Button variant="outline" className="w-full border-border text-foreground hover:bg-secondary cursor-pointer" onClick={() => signIn("google", { callbackUrl: "/me" })}>
                         <Image src={"/google.svg"} width={15} height={15} alt="Google" />
                         Google
                     </Button>

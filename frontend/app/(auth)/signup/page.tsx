@@ -11,6 +11,7 @@ import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { notify } from "@/lib/notify";
+import { signIn } from "next-auth/react";
 
 
 const SignUp = () => {
@@ -27,7 +28,7 @@ const SignUp = () => {
         setIsLoading(true)
 
         if (!name || !email || !password || !confirmPassword) {
-           return console.log("All fields are required");
+            return console.log("All fields are required");
         }
 
         if (password !== confirmPassword) {
@@ -116,10 +117,10 @@ const SignUp = () => {
                             <span className="w-full border-t border-border" />
                         </div>
                         <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-card px-2 text-muted-foreground hidden">Or continue with</span>
+                            <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
                         </div>
                     </div>
-                    <Button variant="outline" className="w-full border-border text-foreground hover:bg-secondary cursor-pointer" hidden>
+                    <Button variant="outline" className="w-full border-border text-foreground hover:bg-secondary cursor-pointer" onClick={() => signIn("google", { callbackUrl: "/me" })}>
                         <Image src={"/google.svg"} width={15} height={15} alt="Google" />
                         Google
                     </Button>

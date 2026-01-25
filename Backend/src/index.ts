@@ -34,5 +34,5 @@ initWebSocket(server)
 const PORT = Number(process.env.PORT) || "3001";
 
 server.listen(PORT, () => {
-    console.log("Listening On Port 3001 with Both HTTP & WS")
+    console.log(`Listening On Port ${PORT} with Both HTTP & WS`)
 });

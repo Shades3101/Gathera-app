@@ -63,6 +63,10 @@ export async function SignIn(req: Request, res: Response) {
             return response(res, 404, "User Not Found")
         }
 
+        if (!user.password) {
+            return response(res, 401, "Please sign in with Google Login");
+        }
+
         const passMatch = await bcrypt.compare(parsedData.data.password, user.password)
         if (passMatch) {
             const token = jwt.sign({
@@ -86,8 +90,8 @@ export async function WsToken(req: Request, res: Response) {
 
     try {
         const userId = req.userId;
-        
-        if(!userId) {
+
+        if (!userId) {
             return response(res, 401, "Unauthorized: User ID missing")
         }
 
@@ -100,5 +104,47 @@ export async function WsToken(req: Request, res: Response) {
         return response(res, 200, "Ws Token", wsToken)
     } catch (err) {
         return response(res, 500, "Failed to issue WS token");
+    }
+}
+
+export async function GoogleLogin(req: Request, res: Response) {
+    try {
+        const { email, name, photo } = req.body;
+
+        if (!email || !name) {
+            return response(res, 400, "Email and Name are required");
+        }
+
+        let user = await prismaClient.user.findFirst({
+            where: {
+                email
+            }
+        });
+
+        if (!user) {
+            user = await prismaClient.user.create({
+                data: {
+                    email,
+                    name,
+                    photo
+                }
+            });
+        } else if (photo && user.photo !== photo) {
+            // Optional: Update photo if it changed on Google side
+            await prismaClient.user.update({
+                where: { id: user.id },
+                data: { photo }
+            });
+        }
+
+        const token = jwt.sign({
+            userId: user.id
+        }, secret, { expiresIn: "1d" });
+
+        return response(res, 200, "Google Login Success", { userId: user.id, token: token });
+
+    } catch (error) {
+        console.log(error);
+        return response(res, 500, "Internal Server Error");
     }
 }

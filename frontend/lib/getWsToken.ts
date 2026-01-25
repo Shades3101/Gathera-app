@@ -1,10 +1,10 @@
 import axios from "axios";
-import { cookies } from "next/headers";
 import { BACKEND_URL } from "./config";
+import { getAccessToken } from "./getAccessToken";
 
 export async function getWsToken() {
 
-    const token = (await cookies()).get("access_token")?.value || "";
+    const token = await getAccessToken();
 
     const res = await axios.get(`${BACKEND_URL}/ws-token`,
         {

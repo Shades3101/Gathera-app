@@ -1,5 +1,4 @@
 import NewRoom from "@/components/NewRoom";
-import { cookies } from "next/headers";
 import { Button } from "@/components/ui/button";
 import { userSession } from "@/lib/authGuard";
 import Link from "next/link";
@@ -9,14 +8,14 @@ import RoomList from "@/app/me/RoomList";
 import { ChevronDown } from "lucide-react";
 import JoinRoom from "@/components/JoinRoom";
 import ScrollToRooms from "@/components/ScrollToRooms";
+import { getAccessToken } from "@/lib/getAccessToken";
 
 // Force dynamic rendering for this page since it uses cookies
 export const dynamic = 'force-dynamic';
 
 export default async function Me() {
     const user = await userSession();
-    const cookieStore = await cookies();
-    const token = cookieStore.get("access_token")?.value;
+    const token = await getAccessToken();
 
     return (
         <div className="min-h-screen bg-background">

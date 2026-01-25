@@ -8,7 +8,8 @@ export async function POST(request: Request) {
 
         if (!token) {
             return NextResponse.json({
-                 error: "Token is required" },
+                error: "Token is required"
+            },
                 { status: 400 }
             );
         }
@@ -23,13 +24,13 @@ export async function POST(request: Request) {
             path: "/",
             secure: isProduction,
             sameSite: isProduction ? "none": "lax",
-            maxAge: 24 * 60 * 60 
+            maxAge: 24 * 60 * 60
         });
 
         return NextResponse.json({
             success: true
         });
-        
+
     } catch (error) {
         console.error("Session creation error:", error);
         return NextResponse.json({

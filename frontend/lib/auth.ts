@@ -2,6 +2,8 @@ import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import axios from "axios";
 
+const BACKEND_API_URL = process.env.BACKEND_API_URL || process.env.NEXT_PUBLIC_API_URL;
+
 export const authOptions: NextAuthOptions = {
     providers: [
         GoogleProvider({
@@ -14,7 +16,7 @@ export const authOptions: NextAuthOptions = {
         async jwt({ token, user, account }) {
             if (account && user) {
                 try {
-                    const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/google-login`, {
+                    const res = await axios.post(`${BACKEND_API_URL}/google-login`, {
                         email: user.email,
                         name: user.name,
                         photo: user.image

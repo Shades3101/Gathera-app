@@ -1,6 +1,6 @@
 "use client";
 
-import { LiveKitRoom, VideoTrack, useTracks, useRoomContext, TrackReference } from "@livekit/components-react";
+import { LiveKitRoom, VideoTrack, useTracks, useRoomContext, TrackReference, RoomAudioRenderer } from "@livekit/components-react";
 import { Room, RoomEvent, VideoPresets, Track, LocalTrackPublication, LocalParticipant } from "livekit-client";
 import { BACKEND_URL } from "@/lib/config";
 import axios from "axios";
@@ -25,6 +25,7 @@ function VideoConference({ chatMessages, sendChatMessage, showChat, setShowChat,
         [
             { source: Track.Source.Camera, withPlaceholder: true },
             { source: Track.Source.ScreenShare, withPlaceholder: false },
+            { source: Track.Source.Microphone, withPlaceholder: false },
         ],
         { onlySubscribed: false },
     );
@@ -203,7 +204,10 @@ export default function CallClient({ roomId, WsToken, accessToken }: { roomId: s
         socket.addEventListener("message", handleMessage);
         return () => {
             socket.removeEventListener("message", handleMessage);
-            socket.send(JSON.stringify({ type: "leave-room", roomId }));
+            socket.send(JSON.stringify({
+                type: "leave-room",
+                roomId
+            }));
         }
     }, [socket, isConnected, roomId, userId]);
 
@@ -296,6 +300,7 @@ export default function CallClient({ roomId, WsToken, accessToken }: { roomId: s
             <VideoConference chatMessages={chatMessages} sendChatMessage={sendChatMessage} showChat={showChat} setShowChat={setShowChat}
                 leaveCall={leaveCall}
             />
+            <RoomAudioRenderer />
         </LiveKitRoom>
     );
 }

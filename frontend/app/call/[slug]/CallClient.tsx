@@ -1,7 +1,7 @@
 "use client";
 
 import { LiveKitRoom, VideoTrack, useTracks, useRoomContext, TrackReference, RoomAudioRenderer } from "@livekit/components-react";
-import { Room, RoomEvent, VideoPresets, Track, LocalTrackPublication, LocalParticipant } from "livekit-client";
+import { RoomEvent, VideoPresets, Track, LocalTrackPublication, LocalParticipant } from "livekit-client";
 import { BACKEND_URL } from "@/lib/config";
 import axios from "axios";
 import "@livekit/components-styles";
@@ -36,6 +36,20 @@ function VideoConference({ chatMessages, sendChatMessage, showChat, setShowChat,
     const [isMicOn, setIsMicOn] = useState(false);
     const [isVideoOn, setIsVideoOn] = useState(false);
     const [isScreenShareOn, setIsScreenShareOn] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(0);
+
+    useEffect(() => {
+
+        if (!showChat && chatMessages.length > 0) {
+            setUnreadCount(prev => prev + 1)
+        }
+    }, [chatMessages]);
+
+    useEffect(() => {
+        if (showChat) {
+            setUnreadCount(0)
+        }
+    }, [showChat])
 
     useEffect(() => {
         const handleLocalTrackUnpublished = (
@@ -137,6 +151,11 @@ function VideoConference({ chatMessages, sendChatMessage, showChat, setShowChat,
 
                 {/* Chat  Button */}
                 <CustomButton onClick={() => setShowChat((prev) => !prev)} className="rounded-full w-14 h-14 text-white shadow-lg cursor-pointer" variant={showChat ? "secondary" : "destructive"}>
+                    {!showChat && unreadCount > 0 && (
+                        <span className="absolute top-[-8] right-18 text-black bg-white rounded-full w-5 h-5 text-xs flex items-center justify-center shadow-lg ">
+                            {unreadCount}
+                        </span>
+                    )}
                     <MessageSquareText />
                 </CustomButton>
 

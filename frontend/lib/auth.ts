@@ -13,8 +13,8 @@ export const authOptions: NextAuthOptions = {
     ],
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
-        async jwt({ token, user, account }) {
-            if (account && user) {
+        async jwt({ token, user }) {
+            if (user && !token.backendToken) {
                 try {
                     const res = await axios.post(`${BACKEND_API_URL}/google-login`, {
                         email: user.email,

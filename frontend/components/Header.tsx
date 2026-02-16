@@ -20,12 +20,24 @@ interface User {
 const Header = ({ user }: { user: User | null }) => {
   console.log(user)
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const pathname = usePathname();
   const { logout } = useLogout();
 
   useEffect(() => {
     setIsMenuOpen(false);
   }, [pathname]);
+
+  // Close dropdown when resizing to mobile
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setIsDropdownOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const navItems = [
     { name: "Home", href: "/" },
@@ -60,7 +72,7 @@ const Header = ({ user }: { user: User | null }) => {
 
         <div className="hidden md:flex items-center gap-4 cursor-pointer">
           {user ? (
-            <DropdownMenu>
+            <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
               <DropdownMenuTrigger asChild>
                 <div className="flex items-center gap-3">
                   <Avatar>
@@ -69,12 +81,12 @@ const Header = ({ user }: { user: User | null }) => {
                   </Avatar>
                 </div>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="start">
+              <DropdownMenuContent className="w-72" align="end">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuLabel>
                   <div className="flex justify-between items-center font-semibold">
                     <span>{user.email}</span>
-                    <Button variant="ghost" size="sm" className="hover:bg-gray-700 cursor-pointer" onClick={logout}>Logout</Button>
+                    <Button variant="ghost" size="sm" className="hover:bg-red-900/70 cursor-pointer" onClick={logout}>Logout</Button>
                   </div>
                 </DropdownMenuLabel>
               </DropdownMenuContent>
@@ -119,17 +131,34 @@ const Header = ({ user }: { user: User | null }) => {
                 {item.name}
               </Link>
             ))}
-            <div className="flex flex-col gap-3 mt-4">
-              <Link
-                href="/signin"
-                className="text-center py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Sign In
-              </Link>
-              <Button asChild className="w-full cursor-pointer">
-                <Link href="/signup">Get Started</Link>
-              </Button>
-            </div>
+            {user ? (
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center gap-3 px-2">
+                  <Avatar>
+                    <AvatarImage src={user.photo} />
+                    <AvatarFallback>{user.email?.[0]?.toUpperCase()}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex justify-between">
+                    <span className="text-sm font-medium truncate">{user.email}</span>
+                  </div>
+                  <Button variant="ghost" className="w-screen   cursor-pointer" onClick={logout}>
+                    Logout
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3 mt-4">
+                <Link
+                  href="/signin"
+                  className="text-center py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Sign In
+                </Link>
+                <Button asChild className="w-full cursor-pointer">
+                  <Link href="/signup">Get Started</Link>
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       )}

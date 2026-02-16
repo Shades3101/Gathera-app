@@ -109,7 +109,7 @@ function VideoConference({ chatMessages, sendChatMessage, showChat, setShowChat,
                                     className="w-full h-full object-cover"
                                 />
                                 <div className="absolute bottom-2 left-2 bg-black/60 px-2 py-0.5 rounded text-xs text-white">
-                                    {track.participant.identity}
+                                    {track.participant.name}
                                 </div>
                             </div>
                         ))}

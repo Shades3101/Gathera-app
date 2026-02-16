@@ -1,10 +1,9 @@
 import jwt, { type JwtPayload } from "jsonwebtoken";
-import { secret } from "./authMiddleware.js";
 
 export default function wsAuthMiddleware(token: string): string | null {
 
     try {
-        const vtoken = jwt.verify(token, secret)
+        const vtoken = jwt.verify(token, process.env.JWT_SECRET!)
 
         if (typeof vtoken == "string") {
             return null

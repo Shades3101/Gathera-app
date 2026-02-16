@@ -42,7 +42,7 @@ const Hero = () => {
                                 Start Meeting Now
                             </Link>
                         </Button>
-                
+                        
                     </div>
 
                     <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-8 animate-fade-in"

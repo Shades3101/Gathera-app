@@ -4,7 +4,7 @@ import { response } from "../utils/responseHandler.js";
 import dotenv from "dotenv"
 dotenv.config()
 
-export const secret = process.env.JWT_SECRET || "12345678bfdksjfkjsf";
+const secret = process.env.JWT_SECRET!;
 
 export default function authMiddleware(req: Request, res: Response, next: NextFunction) {
 

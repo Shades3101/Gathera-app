@@ -3,10 +3,11 @@ import { SignInZodSchema, SignUpZodSchema } from "../types/type.js";
 import { response } from "../utils/responseHandler.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { secret } from "../middleware/authMiddleware.js";
 import { prismaClient } from "../db/client.js";
 import { Prisma } from "../generated/prisma/client.js";
+import { OAuth2Client } from "google-auth-library";
 
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
 export async function SignUp(req: Request, res: Response) {
     try {
@@ -71,7 +72,7 @@ export async function SignIn(req: Request, res: Response) {
         if (passMatch) {
             const token = jwt.sign({
                 userId: user.id
-            }, secret,
+            }, process.env.JWT_SECRET!,
                 { expiresIn: "1d" });
 
             return response(res, 200, "Login Success", { userId: user.id, token: token });
@@ -97,7 +98,7 @@ export async function WsToken(req: Request, res: Response) {
 
         const wsToken = jwt.sign(
             { userId },
-            secret,
+            process.env.JWT_SECRET!,
             { expiresIn: "15m" }
         );
 
@@ -109,39 +110,55 @@ export async function WsToken(req: Request, res: Response) {
 
 export async function GoogleLogin(req: Request, res: Response) {
     try {
-        const { email, name, photo } = req.body;
+        const { credential } = req.body;
 
-        if (!email || !name) {
-            return response(res, 400, "Email and Name are required");
+        if (!credential) {
+            return response(res, 400, "Google Credential Missing");
         }
 
-        let user = await prismaClient.user.findFirst({
-            where: {
-                email
-            }
+        const ticket = await client.verifyIdToken({
+            idToken: credential,
+            audience: process.env.GOOGLE_CLIENT_ID as string,
         });
 
+        const payload = ticket.getPayload();
+        if (!payload || !payload.email) {
+            return response(res, 400, "Invalid Google Token or Email Missing");
+        }
+
+        const { email, name, picture } = payload;
+        const photo = picture || null;
+
+        let user = await prismaClient.user.upsert({
+            where: {
+                email
+            },
+            update: {
+                photo,
+                provider: "Google"
+            },
+            create: {
+                email,
+                name: name || "Google User",
+                photo,
+                provider: "Google"
+            }
+        })
+
         if (!user) {
-            user = await prismaClient.user.create({
-                data: {
-                    email,
-                    name,
-                    photo
-                }
-            });
-        } else if (photo && user.photo !== photo) {
-            // Optional: Update photo if it changed on Google side
-            await prismaClient.user.update({
-                where: { id: user.id },
-                data: { photo }
-            });
+            return response(res, 404, "User Not Found");
         }
 
         const token = jwt.sign({
             userId: user.id
-        }, secret, { expiresIn: "1d" });
+        }, process.env.JWT_SECRET!, {
+            expiresIn: "1d"
+        });
 
-        return response(res, 200, "Google Login Success", { userId: user.id, token: token });
+        return response(res, 200, "Google Login Success", {
+            userId: user.id,
+            token: token
+        });
 
     } catch (error) {
         console.log(error);

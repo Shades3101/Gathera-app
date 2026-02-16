@@ -4,7 +4,7 @@ import { authRoute } from "./Routes/AuthRouter.js";
 import { initWebSocket } from "./websockets/index.js";
 import { RoomRoute } from "./Routes/RoomRouter.js";
 import cors from "cors";
-import { userRoute } from "./Routes/UserRotuer.js";
+import { userRoute } from "./Routes/UserRouter.js";
 import { chatRoute } from "./Routes/ChatRouter.js";
 import { LiveKitRouter } from "./Routes/LiveKitRouter.js";
 import cookieParser from "cookie-parser";
@@ -25,7 +25,7 @@ app.use(cookieParser())
 app.use("/api", authRoute)
 app.use("/api", RoomRoute)
 app.use("/api", userRoute)
-app.use("/api/", chatRoute)
+app.use("/api", chatRoute)
 app.use("/api", LiveKitRouter)
 
 const server = http.createServer(app);

@@ -1,6 +1,6 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/UserAvatar";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useLogout } from "@/hooks/useLogout";
@@ -33,10 +33,7 @@ export default function UserMenu({ user }: { user: User | null }) {
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <div className="flex items-center gap-3 cursor-pointer">
-                    <Avatar>
-                        <AvatarImage src={user.photo} />
-                        <AvatarFallback> {user.email?.[0]?.toUpperCase()} </AvatarFallback>
-                    </Avatar>
+                    <UserAvatar photo={user.photo} name={user.name} email={user.email} />
                 </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-72" align="end">

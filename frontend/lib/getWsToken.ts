@@ -6,15 +6,22 @@ export async function getWsToken() {
 
     const token = await getAccessToken();
 
-    const res = await axios.get(`${BACKEND_URL}/ws-token`,
-        {
-            headers: {
-                Cookie: `access_token=${token}`
+    if (!token) {
+        console.error("getWsToken: No access token found");
+    }
+
+    try {
+        const res = await axios.get(`${BACKEND_URL}/ws-token`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
             }
-        }
-    )
+        )
 
-    console.log(res)
-
-    return res.data.data
+        return res.data.data
+    } catch (error: any) {
+        console.error("getWsToken failed:", error.response?.status, error.response?.data);
+        throw error;
+    }
 }

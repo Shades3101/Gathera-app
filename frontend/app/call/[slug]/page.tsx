@@ -8,13 +8,17 @@ import { getAccessToken } from "@/lib/getAccessToken";
 async function getRoomId(slug: string) {
     const token = await getAccessToken();
 
-    const res = await axios.get(`${BACKEND_URL}/room/${slug}`, {
-        headers: {
-            Cookie: `access_token=${token}`,
-        },
-    });
+    try {
+        const res = await axios.get(`${BACKEND_URL}/room/${slug}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
 
-    return res.data.data.id;
+        return res.data.data.id;
+    } catch (error: any) {
+        throw error;
+    }
 }
 
 export default async function CallPage({ params }: {

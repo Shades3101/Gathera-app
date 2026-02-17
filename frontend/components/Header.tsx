@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { UserAvatar } from "@/components/UserAvatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { useLogout } from "@/hooks/useLogout";
 
@@ -75,10 +75,7 @@ const Header = ({ user }: { user: User | null }) => {
             <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
               <DropdownMenuTrigger asChild>
                 <div className="flex items-center gap-3">
-                  <Avatar>
-                    <AvatarImage src={user.photo} />
-                    <AvatarFallback> {user.email?.[0]?.toUpperCase()} </AvatarFallback>
-                  </Avatar>
+                  <UserAvatar photo={user.photo} name={user.name} email={user.email} />
                 </div>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-72" align="end">
@@ -134,10 +131,7 @@ const Header = ({ user }: { user: User | null }) => {
             {user ? (
               <div className="flex flex-col gap-3">
                 <div className="flex items-center gap-3 px-2">
-                  <Avatar>
-                    <AvatarImage src={user.photo} />
-                    <AvatarFallback>{user.email?.[0]?.toUpperCase()}</AvatarFallback>
-                  </Avatar>
+                  <UserAvatar photo={user.photo} name={user.name} email={user.email} />
                   <div className="flex justify-between">
                     <span className="text-sm font-medium truncate">{user.email}</span>
                   </div>

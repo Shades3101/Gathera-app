@@ -13,7 +13,7 @@ async function getRooms(): Promise<Room[]> {
     try {
         const res = await axios.get(`${BACKEND_URL}/user-room`, {
             headers: {
-                Cookie: `access_token=${token}`
+                Authorization: `Bearer ${token}`,
             }
         });
         return res.data.data;

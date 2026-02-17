@@ -247,9 +247,8 @@ export default function CallClient({ roomId, WsToken, accessToken }: { roomId: s
 
                 const res = await axios.get(url, {
                     headers: {
-                        Authorization: `Bearer ${accessToken}`
-                    },
-                    withCredentials: true
+                        Authorization: `Bearer ${accessToken}`,
+                    }
                 });
 
                 console.log("CallClient: Received response", res.data);

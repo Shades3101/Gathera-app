@@ -23,8 +23,8 @@ export const authOptions: NextAuthOptions = {
                     if (res.data && res.data.data && res.data.data.token) {
                         token.backendToken = res.data.data.token;
                     }
-                } catch (error) {
-                    console.error("Failed to sync user with backend:", error);
+                } catch (error: any) {
+                    console.error("Failed to sync user with backend:", error.response?.data || error.message);
                 }
             }
             return token;

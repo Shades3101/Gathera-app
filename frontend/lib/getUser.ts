@@ -26,7 +26,7 @@ export default async function getUser() {
 
         const res = await axios.get(`${BACKEND_URL}/me`, {
             headers: {
-                Cookie: `access_token=${token}`
+                Authorization: `Bearer ${token}`,
             },
         });
 

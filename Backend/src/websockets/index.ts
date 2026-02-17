@@ -13,7 +13,20 @@ const connectedUser: ConnectedUserType[] = [];
 
 export function initWebSocket(server: any) {
 
-  const wss = new WebSocketServer({ server });
+  const wss = new WebSocketServer({
+    server,
+    verifyClient: (info, callback) => {
+      const origin = info.origin;
+      const allowedOrigins = [process.env.FRONTEND_URL, "http://localhost:3000"].filter(Boolean);
+
+      if (!allowedOrigins.includes(origin)) {
+        console.warn(`Blocked WS connection from unauthorized origin: ${origin}`);
+        return callback(false, 403, "Unauthorized Origin");
+      }
+
+      callback(true);
+    }
+  });
 
   wss.on("connection", (ws, request) => {
 

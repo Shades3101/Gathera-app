@@ -45,7 +45,8 @@ const SignIn = () => {
             //setting the cookie in frontend for it to accessible 
             if (response.data.data && response.data.data.token) {
                 await axios.post("/api/auth/login-session", {
-                    token: response.data.data.token
+                    token: response.data.data.token,
+                    refreshToken: response.data.data.refreshToken,
                 });
                 console.log("Session created via API route");
             }

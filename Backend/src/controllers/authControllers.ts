@@ -3,9 +3,24 @@ import { SignInZodSchema, SignUpZodSchema } from "../types/type.js";
 import { response } from "../utils/responseHandler.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 import { prismaClient } from "../db/client.js";
 import { Prisma } from "../generated/prisma/client.js";
 import { OAuth2Client } from "google-auth-library";
+
+function hashToken(token: string): string {
+    return crypto.createHash("sha256").update(token).digest("hex");
+}
+
+async function saveRefreshToken(userId: string, rawToken: string) {
+    await prismaClient.refreshToken.create({
+        data: {
+            tokenHash: hashToken(rawToken),
+            userId,
+            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        },
+    });
+}
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
@@ -48,7 +63,7 @@ export async function SignIn(req: Request, res: Response) {
     try {
 
         const parsedData = SignInZodSchema.safeParse(req.body);
-        console.log(parsedData)
+
         if (!parsedData.success) {
 
             return response(res, 400, "Invalid Inputs", parsedData.error.format())
@@ -70,12 +85,26 @@ export async function SignIn(req: Request, res: Response) {
 
         const passMatch = await bcrypt.compare(parsedData.data.password, user.password)
         if (passMatch) {
-            const token = jwt.sign({
-                userId: user.id
-            }, process.env.JWT_SECRET!,
-                { expiresIn: "1d" });
+            const token = jwt.sign(
+                { userId: user.id },
+                process.env.JWT_SECRET!,
+                { expiresIn: "15m" }
+            );
 
-            return response(res, 200, "Login Success", { userId: user.id, token: token });
+            const refreshToken = jwt.sign(
+                { userId: user.id },
+                process.env.REFRESH_SECRET!,
+                { expiresIn: "7d" }
+            );
+
+            await saveRefreshToken(user.id, refreshToken);
+
+            return response(res, 200, "Login Success", {
+                userId: user.id,
+                token,
+                refreshToken,
+                expiresIn: "900"
+            });
 
         } else {
             return response(res, 401, "Invalid Credentials");
@@ -122,6 +151,7 @@ export async function GoogleLogin(req: Request, res: Response) {
         });
 
         const payload = ticket.getPayload();
+        
         if (!payload || !payload.email) {
             return response(res, 400, "Invalid Google Token or Email Missing");
         }
@@ -152,16 +182,83 @@ export async function GoogleLogin(req: Request, res: Response) {
         const token = jwt.sign({
             userId: user.id
         }, process.env.JWT_SECRET!, {
-            expiresIn: "1d"
+            expiresIn: "15m"
         });
+
+        const refreshToken = jwt.sign({
+            userId: user.id
+        }, process.env.REFRESH_SECRET!, {
+            expiresIn: "7d"
+        })
+
+        await saveRefreshToken(user.id, refreshToken);
 
         return response(res, 200, "Google Login Success", {
             userId: user.id,
-            token: token
+            token: token,
+            refreshToken,
+            expiresIn: "900"
         });
 
     } catch (error) {
         console.log(error);
         return response(res, 500, "Internal Server Error");
+    }
+}
+
+export async function refreshToken(req: Request, res: Response) {
+    try {
+        const { refreshToken } = req.body;
+
+        if (!refreshToken) {
+            return response(res, 401, "Refresh Token Missing")
+        }
+
+        const decodedToken = jwt.verify(refreshToken,
+            process.env.REFRESH_SECRET!
+        ) as { userId: string }
+
+        // Verify the token exists in DB (not revoked)
+        const tokenHash = hashToken(refreshToken);
+        const storedToken = await prismaClient.refreshToken.findUnique({
+            where: {
+                tokenHash
+            }
+        });
+
+        if (!storedToken) {
+            return response(res, 403, "Refresh token has been revoked");
+        }
+
+        // Token rotation: delete old token
+        await prismaClient.refreshToken.delete({
+            where: {
+                id: storedToken.id
+            }
+        });
+
+        // Issue new access + refresh token pair
+        const newAccessToken = jwt.sign({
+            userId: decodedToken.userId
+        }, process.env.JWT_SECRET!, {
+            expiresIn: "15m"
+        });
+
+        const newRefreshToken = jwt.sign({
+            userId: decodedToken.userId
+        }, process.env.REFRESH_SECRET!, {
+            expiresIn: "7d"
+        });
+
+        await saveRefreshToken(decodedToken.userId, newRefreshToken);
+
+        return response(res, 200, "Token Refreshed", {
+            token: newAccessToken,
+            refreshToken: newRefreshToken,
+            expiresIn: "900"
+        });
+
+    } catch (error) {
+        return response(res, 403, "Invalid Refresh Token");
     }
 }

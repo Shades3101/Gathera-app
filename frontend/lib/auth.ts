@@ -13,15 +13,18 @@ export const authOptions: NextAuthOptions = {
     ],
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
-        async jwt({ token, user, account }) {
+        async jwt({ token, account }) {
             if (account && account.id_token) {
                 try {
                     const res = await axios.post(`${BACKEND_API_URL}/google-login`, {
                         credential: account.id_token,
                     });
 
-                    if (res.data && res.data.data && res.data.data.token) {
+                    if (res.data?.data?.token) {
                         token.backendToken = res.data.data.token;
+                    }
+                    if (res.data?.data?.refreshToken) {
+                        token.refreshToken = res.data.data.refreshToken;
                     }
                 } catch (error: any) {
                     console.error("Failed to sync user with backend:", error.response?.data || error.message);
@@ -31,6 +34,7 @@ export const authOptions: NextAuthOptions = {
         },
         async session({ session, token }) {
             session.backendToken = token.backendToken;
+            (session as any).refreshToken = token.refreshToken;
             return session;
         }
     }

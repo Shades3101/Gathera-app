@@ -14,51 +14,63 @@ datasource db {
 }
 
 model User {
-  id              String               @id @default(uuid())
-  email           String               @unique
-  password        String?
-  name            String
-  photo           String?
-  createdAt       DateTime             @default(now())
-  provider        String?
-  rooms           Room[]              
-  chats           Chat[]
-  membership      RoomMember[]
+  id            String         @id @default(uuid())
+  email         String         @unique
+  password      String?
+  name          String
+  photo         String?
+  createdAt     DateTime       @default(now())
+  provider      String?
+  rooms         Room[]
+  chats         Chat[]
+  membership    RoomMember[]
+  refreshTokens RefreshToken[]
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  tokenHash String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 model Room {
-  id              String               @id @default(uuid()) 
-  slug            String               @unique
-  hostId          String
-  host            User                 @relation(fields: [hostId], references: [id])
-  createdAt       DateTime             @default(now())
-  chats           Chat[]
-  members         RoomMember[]
+  id        String       @id @default(uuid())
+  slug      String       @unique
+  hostId    String
+  host      User         @relation(fields: [hostId], references: [id])
+  createdAt DateTime     @default(now())
+  chats     Chat[]
+  members   RoomMember[]
 
   @@index([hostId])
 }
 
 model Chat {
-  id              Int                  @id @default(autoincrement())
-  roomId          String
-  message         String
-  userId          String?
-  room            Room                 @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  user            User?               @relation(fields: [userId], references: [id], onDelete: SetNull)
-  createdAt       DateTime             @default(now())
+  id        Int      @id @default(autoincrement())
+  roomId    String
+  message   String
+  userId    String?
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
 
   @@index([userId])
   @@index([roomId, createdAt(sort: Desc)])
 }
 
 model RoomMember {
-  id              String                 @id @default(uuid())
-  userId          String
-  roomId          String
-  user            User                   @relation(fields: [userId], references: [id])
-  room            Room                   @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  createdAt       DateTime               @default(now())
+  id        String   @id @default(uuid())
+  userId    String
+  roomId    String
+  user      User     @relation(fields: [userId], references: [id])
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 
-  @@index([roomId])
   @@unique([userId, roomId])
+  @@index([roomId])
 }

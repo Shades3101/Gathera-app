@@ -3,17 +3,34 @@ import { prismaClient } from "../db/client.js";
 import { response } from "../utils/responseHandler.js";
 
 export default async function getChats(req: Request, res: Response) {
+    const userId = req.userId;
     const roomId = req.params.roomId;
 
-    if(!roomId) {
+    if (!userId) {
+        return response(res, 401, "Unauthorized");
+    }
+
+    if (!roomId) {
         return response(res, 400, "Invalid RoomId")
     }
 
     const messages = await prismaClient.chat.findMany({
         where: {
-            roomId: roomId
+            roomId: roomId,
+            room: {
+                OR: [
+                    { hostId: userId },
+                    {
+                        members: {
+                            some: {
+                                userId: userId
+                            }
+                        }
+                    }
+                ]
+            }
         },
-        orderBy :{
+        orderBy: {
             createdAt: "desc"
         },
         take: 50

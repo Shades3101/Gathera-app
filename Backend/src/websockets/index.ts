@@ -83,6 +83,13 @@ export function initWebSocket(server: any) {
         const room = await prismaClient.room.findUnique({
           where: {
             id: roomId
+          },
+          include: {
+            members: {
+              where: {
+                userId: userId
+              }
+            }
           }
         })
 
@@ -90,6 +97,17 @@ export function initWebSocket(server: any) {
           ws.send(JSON.stringify({
             type: "Error",
             message: "Room Does not exist"
+          }));
+          return;
+        }
+
+        const isMember = room.members.length > 0;
+        const isHost = room.hostId === userId;
+
+        if (!isMember && !isHost) {
+          ws.send(JSON.stringify({
+            type: "Error",
+            message: "Unauthorized: You are not a member of this room"
           }));
           return;
         }
@@ -133,7 +151,15 @@ export function initWebSocket(server: any) {
 
         //use queue - better approach, push it to queue
         //add try-catch to avoid crashing of the server 
-        //FIX the bug (do not save chats if a user is not in the room)
+        //FIX the bug (do not save chats if a user is not in the room): DONE
+        if (!user.rooms.has(roomId)) {
+          ws.send(JSON.stringify({
+            type: "Error",
+            message: "You must join the room before sending messages"
+          }));
+          return;
+        }
+
         await prismaClient.chat.create({
           data: {
             roomId,

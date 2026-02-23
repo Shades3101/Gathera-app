@@ -241,8 +241,7 @@ export default function CallClient({ roomId, WsToken, accessToken }: { roomId: s
         const fetchToken = async () => {
             console.log("CallClient: Fetching token for roomId:", roomId, "userId:", userId);
             try {
-                const identity = userId;
-                const url = `${BACKEND_URL}/livekit/token?roomId=${roomId}&participantName=${identity}`;
+                const url = `${BACKEND_URL}/livekit/token?roomId=${roomId}`;
                 console.log("CallClient: Requesting", url);
 
                 const res = await axios.get(url, {

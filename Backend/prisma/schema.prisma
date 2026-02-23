@@ -23,6 +23,7 @@ model User {
   provider        String?
   rooms           Room[]              
   chats           Chat[]
+  membership      RoomMember[]
 }
 
 model Room {
@@ -32,14 +33,32 @@ model Room {
   host            User                 @relation(fields: [hostId], references: [id])
   createdAt       DateTime             @default(now())
   chats           Chat[]
+  members         RoomMember[]
+
+  @@index([hostId])
 }
 
 model Chat {
   id              Int                  @id @default(autoincrement())
   roomId          String
   message         String
-  userId          String
-  room            Room                 @relation(fields: [roomId], references: [id])
-  user            User                 @relation(fields: [userId], references: [id])
+  userId          String?
+  room            Room                 @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user            User?               @relation(fields: [userId], references: [id], onDelete: SetNull)
   createdAt       DateTime             @default(now())
+
+  @@index([userId])
+  @@index([roomId, createdAt(sort: Desc)])
+}
+
+model RoomMember {
+  id              String                 @id @default(uuid())
+  userId          String
+  roomId          String
+  user            User                   @relation(fields: [userId], references: [id])
+  room            Room                   @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  createdAt       DateTime               @default(now())
+
+  @@index([roomId])
+  @@unique([userId, roomId])
 }

@@ -42,7 +42,7 @@ model Room {
   id        String       @id @default(uuid())
   slug      String       @unique
   hostId    String
-  host      User         @relation(fields: [hostId], references: [id])
+  host      User         @relation(fields: [hostId], references: [id], onDelete: Cascade)
   createdAt DateTime     @default(now())
   chats     Chat[]
   members   RoomMember[]
@@ -67,7 +67,7 @@ model RoomMember {
   id        String   @id @default(uuid())
   userId    String
   roomId    String
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 

@@ -161,7 +161,8 @@ This file tracks identified issues, bugs, and areas for improvement in the Gathe
 - [x] **Optimized Chat Indexes**: Added a compound index `@@index([roomId, createdAt(sort: Desc)])` to the `Chat` model.
   - *Impact*: Drastically improves performance for chat history retrieval, which is the most frequent DB read in the app.
   - *Completed*: 2026-02-18
-- [ ] **No OnDelete Cascade**: Deleting a room crashes or is blocked if chats exist.
+- [x] **No OnDelete Cascade**: Implemented comprehensive cascading rules for User and Room deletions to prevent orphaned records and database crashes.
+  - *Completed*: 2026-02-23
 - [ ] **Strict TS Caching**: Production builds have some strict TS checks disabled.
 - [ ] **Redis for WebSockets**: Horizontal scaling is currently impossible without a Pub/Sub layer.
 

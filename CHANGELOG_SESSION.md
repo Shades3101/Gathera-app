@@ -13,8 +13,8 @@
 - **Migration Sync**: Verified and confirmed that the production database schema is fully synchronized with the local Prisma membership model.
   File: `Backend/prisma/schema.prisma` (`RoomMember`, `RefreshToken`)
 
-- **Database Integrity**: Configured cascading deletes for user-related data. Hosted rooms and memberships are automatically cleared on user deletion, while chat history is preserved via `SetNull` to maintain conversation continuity.
-  File: `Backend/prisma/schema.prisma` (`Room`, `Chat`, `RoomMember`)
+- **Database Integrity**: Configured cascading deletes for user and room-related data. Hosted rooms and memberships are automatically cleared on user deletion, and chat history is wiped when a room is removed. User chat history is preserved via `SetNull` to maintain conversation continuity after account deletion.
+  File: `Backend/prisma/schema.prisma` (`User`, `Room`, `Chat`, `RoomMember`)
 
 - **Repository Maintenance**: Cleaned up the local git state and established 'main' as the primary tracking branch for ongoing development.
   File: `CHANGELOG_SESSION.md`, `SYSTEM_ARCHITECTURE_AUDIT.md`

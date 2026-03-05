@@ -1,6 +1,6 @@
 # Gathera App
 
-![Gathera App Banner](assets/banner.png) <!-- Replace with your banner image -->
+![Gathera App Banner](frontend/public/Landing%20Page.png)
 
 <div align="center">
 
@@ -161,11 +161,17 @@ Open [http://localhost:3000](http://localhost:3000) in your browser. You should 
 
 ## 📸 Screenshots
 
-<!-- Add your screenshots here. You can drag and drop images into the 'assets' folder and reference them below. -->
+| Landing Page |
+| :---: |
+| ![Landing Page](frontend/public/Landing%20Page.png) |
 
-| Dashboard | Video Room |
-|:---:|:---:|
-| ![Dashboard](assets/dashboard_placeholder.png) | ![Video Room](assets/video_room_placeholder.png) |
+| Dashboard | Room List |
+| :---: | :---: |
+| ![Dashboard](frontend/public/Dashboard.png) | ![Room List](frontend/public/Room%20List%20Page.png) |
+
+| Video Call Interface |
+| :---: |
+| ![Call Page](frontend/public/Call%20Page.png) |
 
 ## 🤝 Contributing
 

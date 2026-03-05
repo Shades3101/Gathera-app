@@ -1,14 +1,27 @@
 # 📝 Session Changelog
 
+## 🛠️ March 5, 2026
+
+- **Documentation Assets**: Added high-quality screenshots to the project to enhance visual documentation.
+  - *Assets*: Added `Landing Page.png`, `Dashboard.png`, `Room List Page.png`, and `Call Page.png` to the frontend public assets.
+  File: `frontend/public/`
+
+- **README Visual Overhaul**: Updated the `README.md` to showcase the actual application UI.
+  - *Main Hub*: Replaced the generic banner with the actual Landing Page screenshot.
+  - *Previews*: Integrated a new Screenshots section featuring the Dashboard, Room List, and Video Call interface.
+  File: `README.md`
+
+---
+
 ## 🛠️ February 23, 2026
 
 - **Secure Refresh Token Flow**: Implemented a robust multi-session refresh token system with rotation to enhance security and session persistence.
-  - *Backend*: Added `RefreshToken` model, rotation logic in `authControllers.ts`, and token renewal endpoints.
-  - *Frontend*: Integrated `axios` interceptors for seamless token refreshing and session persistence in NextAuth.
-  File: `Backend/src/controllers/authControllers.ts` (`refreshToken`, `logout`), `frontend/lib/api.ts` (`apiClient`), `frontend/lib/auth.ts` (`jwt`, `session`)
+  - *Backend*: Added `RefreshToken` model, rotation logic in `authControllers.ts`, and SHA-256 hashed token storage.
+  - *Frontend*: Integrated `axios` interceptors for automatic token rotation and created private API routes for secure cookie management.
+  File: `Backend/src/controllers/authControllers.ts` (`refreshToken`), `frontend/lib/api.ts` (`api`), `frontend/app/api/auth/refresh/route.ts`, `frontend/lib/auth.ts`
 
 - **Version Finalization & Deployment**: Committed and pushed all pending security, membership, and database changes to the repository.
-  File: `Backend/src/index.ts`
+  File: `Backend/src/index.ts`, `.env.example` (cleaned and updated)
 
 - **Migration Sync**: Verified and confirmed that the production database schema is fully synchronized with the local Prisma membership model.
   File: `Backend/prisma/schema.prisma` (`RoomMember`, `RefreshToken`)
